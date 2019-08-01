@@ -127,8 +127,8 @@ using Suppressor
     @test 1.0 + eps(Float64) ≈ du
 
     # Unary mathematical functions (most of them only works with unitless variables)
-    @test sqrt(db) === db^(1//2)
-    @test cbrt(db) === db^(1//3)
+    @test sqrt(db) ≈ db^(1//2)
+    @test cbrt(db) ≈ db^(1//3)
     @test abs(-db) === db
     @test abs2(-db) === db^2
     @test_throws MethodError log(db)
