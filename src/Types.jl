@@ -32,6 +32,7 @@ iterate(up::UnitPartials, state) = iterate(up.partials, state)
 
 # Convenience functions
 zero(up::UnitPartials) = UnitPartials((zero(p) for p in up.partials)...)
+zero(::Type{UnitPartials{N,TT}}) where {N,TT <: Tuple} = UnitPartials((zero(p) for p in TT.parameters)...)
 
 ####################################################################################
 ################################# UnitDual #########################################
@@ -53,6 +54,7 @@ partials(x::UnitDual) = x.partials
 
 # Convenience functions
 zero(x::UnitDual) = UnitDual(zero(value(x)), zero(partials(x)))
+zero(::Type{UnitDual{DT, PT}}) where {DT, PT} = UnitDual(zero(DT), zero(PT))
 function zeros(x::T, n) where {T <:UnitDual}
     T[zero(x) for i in 1:n]
 end
