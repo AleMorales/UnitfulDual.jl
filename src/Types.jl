@@ -25,6 +25,7 @@ function getindex(up::UnitPartials, i)
     @boundscheck i > length(up.partials) && throw(BoundsError(up, i))
     up.partials[i]
 end
+# Iterator interface
 length(up::UnitPartials) = length(up.partials)
 iterate(up::UnitPartials) = iterate(up.partials)
 iterate(up::UnitPartials, state) = iterate(up.partials, state)
@@ -58,4 +59,8 @@ function show(io::IO, x::UnitDual)
     print(io, "$(value(x)) ")
     show(io, partials(x))
 end
+
+# Iterator interface
 length(x::UnitDual) = 1
+iterate(x::UnitDual) = (x, nothing)
+iterate(x::UnitDual, state::Nothing) = nothing
