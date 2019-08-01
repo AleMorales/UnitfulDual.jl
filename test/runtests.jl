@@ -172,6 +172,7 @@ using Suppressor
     @test da0 isa UnitDual
     @test value(da0) === zero(a)
     @test partials(da0) === UnitPartials((zero(p) for p in partials(da))...)
+    @test zeros(da, 2) == [da0, da0]
 
     # Iteration
     @test length(da) === 1

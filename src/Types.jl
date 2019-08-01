@@ -53,6 +53,9 @@ partials(x::UnitDual) = x.partials
 
 # Convenience functions
 zero(x::UnitDual) = UnitDual(zero(value(x)), zero(partials(x)))
+function zeros(x::T, n) where {T <:UnitDual}
+    T[zero(x) for i in 1:n]
+end
 
 # Pretty printing
 function show(io::IO, x::UnitDual)
