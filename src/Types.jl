@@ -55,7 +55,7 @@ zero(x::UnitDual) = UnitDual(zero(value(x)), zero(partials(x)))
 
 # Pretty printing
 function show(io::IO, z::UnitDual)
-    print(io, "$(value(z))")
+    print(io, "$(value(z)) ")
     show(io, partials(z))
 end
 
