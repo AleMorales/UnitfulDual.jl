@@ -25,10 +25,12 @@ function getindex(up::UnitPartials, i)
     @boundscheck i > length(up.partials) && throw(BoundsError(up, i))
     up.partials[i]
 end
-
 length(up::UnitPartials) = length(up.partials)
 iterate(up::UnitPartials) = iterate(up.partials)
 iterate(up::UnitPartials, state) = iterate(up.partials, state)
+
+# Convenience functions
+zero(up::UnitPartials) = UnitPartials((zero(p) for p in up.partials)...)
 
 ####################################################################################
 ################################# UnitDual #########################################
@@ -47,6 +49,9 @@ UnitDual(val, args...) = UnitDual(val, UnitPartials(args))
 # Setters and getters
 value(x::UnitDual) = x.value
 partials(x::UnitDual) = x.partials
+
+# Convenience functions
+zero(x::UnitDual) = UnitDual(zero(value(x)), zero(partials(x)))
 
 # Pretty printing
 function show(io::IO, z::UnitDual)
