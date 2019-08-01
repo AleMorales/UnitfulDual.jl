@@ -20,12 +20,15 @@ function show(io::IO, up::UnitPartials)
     print(io, '{', join(up.partials, ", "), '}')
 end
 
-# Indexing directly the underlying tuple
+# Forwarding methods to the underlying tuple
 function getindex(up::UnitPartials, i)
     @boundscheck i > length(up.partials) && throw(BoundsError(up, i))
     up.partials[i]
 end
 
+length(up::UnitPartials) = length(up.partials)
+iterate(up::UnitPartials) = iterate(up.partials)
+iterate(up::UnitPartials, state) = iterate(up.partials, state)
 
 ####################################################################################
 ################################# UnitDual #########################################
@@ -47,6 +50,7 @@ partials(x::UnitDual) = x.partials
 
 # Pretty printing
 function show(io::IO, z::UnitDual)
-    print(io, "$(value(z))", " {", join(partials(z).partials, ", "), '}')
+    print(io, "$(value(z))")
+    show(io, partials(z))
 end
 
