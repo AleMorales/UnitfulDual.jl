@@ -1,7 +1,8 @@
 module UnitfulDual
 
 import DiffRules
-import Base: show, inv, getindex, length, iterate, zero, zeros,
+using NamedTupleTools
+import Base: show, inv, getindex, getproperty, length, iterate, zero, zeros,
        +, *, -, /, ^, ==, isequal, isless, inv, isapprox,
        sqrt, cbrt, abs, abs2, log, log10, log2, exp, 
        sin, cos, tan, sec, csc, cot, acos, atan, asec, acsc, acot
