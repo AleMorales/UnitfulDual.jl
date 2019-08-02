@@ -61,7 +61,7 @@ zero(::Type{UnitPartials{N,TT}}) where {N,TT <: Tuple} = UnitPartials((zero(p) f
 
 function zero(::Type{UnitPartials{N,TT}}) where {N,TT <: NamedTuple}
     z = Tuple((zero(p) for p in TT.parameters[2].parameters))
-    UnitPartials(namedtuple(TT.parameters[1], z))
+    UnitPartials(NamedTupleTools.namedtuple(TT.parameters[1], z))
 end
 
 ####################################################################################

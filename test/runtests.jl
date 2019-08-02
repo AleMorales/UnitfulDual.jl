@@ -2,6 +2,7 @@ using UnitfulDual
 using Unitful
 using Test
 using Suppressor
+using NamedTupleTools
 
 @testset "UnitfulDual.jl" begin
 
@@ -335,7 +336,7 @@ using Suppressor
     @test zeros(typeof(da), 2)  == [da0, da0]
 
     # Convenience functions  - named
-    nda0 = zero(nda)
+    nda0 = zero(typeof(nda))
     @test nda0 isa UnitDual
     @test value(nda0) === zero(a)
     # The following tests have some issues with conversion of FreeUnits into Float64
@@ -350,5 +351,30 @@ using Suppressor
     # Iteration- named
     @test length(nda) === 1
     @test nda.*[1,2] == [nda, 2*nda]
+
+    # Automatically generate UnitDual objects with partial derivatives
+    duals_dict = initialize_dual(Dict(:a => a, :b => b, :c => c), (:a, :b))
+    @test duals_dict isa Dict
+    @test length(duals_dict) == 3
+    @test Symbol.(keys(duals_dict)) == [:a, :b, :c]
+    @test all([length(partials(dual)) == 2 for dual in values(duals_dict)])
+    @test partials(duals_dict[:a]).a === 1.0
+    @test partials(duals_dict[:a]).b === 0.0
+    @test partials(duals_dict[:b]).a === 0.0
+    @test partials(duals_dict[:b]).b === 1.0
+    @test partials(duals_dict[:c]).a === zero(c/a)
+    @test partials(duals_dict[:c]).b === zero(c/b)
+
+    duals_ntuple = initialize_dual((a = a, b = b, c = c), (:a, :b))
+    @test duals_ntuple isa NamedTuple
+    @test length(duals_ntuple) == 3
+    @test keys(duals_ntuple) == (:a, :b, :c)
+    @test all([length(partials(dual)) == 2 for dual in values(duals_ntuple)])
+    @test partials(duals_ntuple[:a]).a === 1.0
+    @test partials(duals_ntuple[:a]).b === 0.0
+    @test partials(duals_ntuple[:b]).a === 0.0
+    @test partials(duals_ntuple[:b]).b === 1.0
+    @test partials(duals_ntuple[:c]).a === zero(c/a)
+    @test partials(duals_ntuple[:c]).b === zero(c/b)
 
 end
