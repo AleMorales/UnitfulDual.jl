@@ -22,13 +22,13 @@ julia> r₂ = 1.0u"mol/L"
 julia> k = 0.1u"L/mol/s"
 0.1 L mol^-1 s^-1
 
-julia> dr₁ = UnitDual(r₁, (1.0, zero(r₁/r₂), zero(r₁/k)))
+julia> dr₁ = UnitDual(r₁, 1.0, zero(r₁/r₂), zero(r₁/k))
 1.0 mol L^-1 {1.0, 0.0, 0.0 mol^2 s L^-2}
 
-julia> dr₂ = UnitDual(r₂, (zero(r₂/r₁), 1.0, zero(r₂/k)))
+julia> dr₂ = UnitDual(r₂, zero(r₂/r₁), 1.0, zero(r₂/k))
 1.0 mol L^-1 {0.0, 1.0, 0.0 mol^2 s L^-2}
 
-julia> dk  = UnitDual(k,  (zero(k/r₁), zero(k/r₂), 1.0))
+julia> dk  = UnitDual(k,  zero(k/r₁), zero(k/r₂), 1.0)
 0.1 L mol^-1 s^-1 {0.0 L^2 mol^-2 s^-1, 0.0 L^2 mol^-2 s^-1, 1.0}
 ```
 
@@ -39,10 +39,29 @@ julia> rate = dr₁*dr₂*dk
 0.1 mol L^-1 s^-1 {0.1 s^-1, 0.1 s^-1, 1.0 mol^2 L^-2}
 ```
 
+You can also assign names to the partial derivatives and use different order for different dual numbers:
+
+```julia
+julia> dr₁ = UnitDual(r₁, r₁ = 1.0, r₂ = zero(r₁/r₂), k = zero(r₁/k))
+1.0 mol L^-1 {r₁ = 1.0, r₂ = 0.0, k = 0.0 mol^2 s L^-2}
+
+julia> dr₂ = UnitDual(r₂, r₂ = 1.0, r₁ = zero(r₂/r₁), k = zero(r₂/k))
+1.0 mol L^-1 {r₂ = 1.0, r₁ = 0.0, k = 0.0 mol^2 s L^-2}
+
+julia> dk  = UnitDual(k, k = 1.0,  r₁ = zero(k/r₁), r₂ = zero(k/r₂))
+0.1 L mol^-1 s^-1 {k = 1.0, r₁ = 0.0 L^2 mol^-2 s^-1, r₂ = 0.0 L^2 mol^-2 s^-1}
+
+julia> rate = dr₁*dr₂*dk
+0.1 mol L^-1 s^-1 {r₁ = 0.1 s^-1, r₂ = 0.1 s^-1, k = 1.0 mol^2 L^-2}
+
+julia> partials(rate).k
+1.0 mol^2 L^-2
+```
+
 UnitfulDual is strongly inspired by [ForwardDiff](https://github.com/JuliaDiff/ForwardDiff.jl). The main difference is that the tuple of partial derivatives in an `UnitDual` number is heterogeneous, as different physical dimensions result in different types. Thus, the implementation is simply:
 
 ```julia
-struct UnitPartials{N, TT <: Tuple}
+struct UnitPartials{N, TT <: Union{Tuple, NamedTuple}}
     partials::TT
 end
 
